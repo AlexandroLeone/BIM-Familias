@@ -1,0 +1,15 @@
+# Build and IDE output
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# Local diagnostic and generated runtime data
+*.log
+.bimfamilias-downloads.json
+
+# Temporary archives and editor files
+*.tmp
+*.bak
+*.zip

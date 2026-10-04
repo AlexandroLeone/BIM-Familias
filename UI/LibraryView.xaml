@@ -1,0 +1,154 @@
+<UserControl x:Class="BimFamilias.UI.LibraryView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Background="#F3F5F8" Foreground="#182536" FontFamily="Segoe UI" FontSize="13" MinWidth="400">
+ <UserControl.Resources>
+  <SolidColorBrush x:Key="Accent" Color="#167D8D"/>
+  <Style TargetType="Button">
+   <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="#24364B"/><Setter Property="BorderBrush" Value="#DCE3EA"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="13,9"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Margin" Value="0,0,7,0"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="B" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="B" Property="BorderBrush" Value="#167D8D"/><Setter TargetName="B" Property="Opacity" Value=".85"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter TargetName="B" Property="Opacity" Value=".4"/></Trigger><Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="B" Property="BorderBrush" Value="#167D8D"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="#167D8D"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#167D8D"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+  <Style TargetType="ComboBox"><Setter Property="MinHeight" Value="32"/><Setter Property="Padding" Value="8,5"/><Setter Property="Margin" Value="0,0,8,0"/><Setter Property="MinWidth" Value="130"/></Style>
+  <Style TargetType="TextBox"><Setter Property="Padding" Value="10,9"/><Setter Property="BorderBrush" Value="#DCE3EA"/><Setter Property="BorderThickness" Value="1"/></Style>
+  <Style x:Key="Label" TargetType="TextBlock"><Setter Property="FontSize" Value="11"/><Setter Property="Foreground" Value="#718094"/><Setter Property="Margin" Value="0,15,0,5"/></Style>
+  <Style TargetType="ListBoxItem"><Setter Property="Padding" Value="10,9"/><Setter Property="Margin" Value="0,2"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style>
+ </UserControl.Resources>
+ <Grid>
+  <Grid.RowDefinitions><RowDefinition Height="76"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <Border Background="#132535" Padding="20,12">
+   <DockPanel>
+    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+     <Button x:Name="DownloadButton" Content="Baixar biblioteca" Click="DownloadLibraryClick" ToolTip="Baixar bibliotecas online; disponível somente após ativação" Padding="10,3"/>
+     <CheckBox x:Name="HideAfterLoadCheck" Content="Ocultar após inserir" IsChecked="True" Foreground="White" VerticalAlignment="Center" Margin="0,0,12,0" ToolTip="Oculta a biblioteca quando o modo Inserir Componente começar"/>
+     <Button Content="—" Click="MinimizeClick" ToolTip="Ocultar/minimizar biblioteca" Padding="12,3" FontSize="18"/>
+     <Button Content="↻ Atualizar" Click="RefreshClick" ToolTip="Atualizar índice das pastas cadastradas" x:Name="RefreshButton"/>
+     <Button Content="⋯" Click="MenuClick" ToolTip="Pastas, duplicatas, versões e exportação" FontSize="22" Padding="14,0"/>
+    </StackPanel>
+    <StackPanel><TextBlock Text="BIM  /  BIBLIOTECA" Foreground="#6FD3CF" FontSize="11" FontWeight="SemiBold"/>
+     <TextBlock Text="Famílias, ao seu alcance." Foreground="White" FontSize="22" FontWeight="SemiBold" Margin="0,3,0,0"/>
+    </StackPanel>
+   </DockPanel>
+  </Border>
+  <Grid Grid.Row="1">
+   <Grid.ColumnDefinitions><ColumnDefinition x:Name="NavColumn" Width="205"/><ColumnDefinition Width="*"/><ColumnDefinition x:Name="InspectorColumn" Width="280"/></Grid.ColumnDefinitions>
+   <Border x:Name="Navigation" Background="White" BorderBrush="#E0E6ED" BorderThickness="0,0,1,0" Padding="12,16">
+    <DockPanel>
+     <StackPanel DockPanel.Dock="Top">
+      <TextBlock Text="SUA BIBLIOTECA" Style="{StaticResource Label}" Margin="10,0,0,8"/>
+      <TextBlock x:Name="LibraryCount" Text="Carregando índice…" FontSize="22" FontWeight="SemiBold" Margin="10,0,0,18"/>
+      <TextBlock Text="CATEGORIAS" Style="{StaticResource Label}" Margin="10,0,0,8"/>
+     </StackPanel>
+     <ListBox x:Name="Categories" BorderThickness="0" SelectionChanged="CategoryChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="Transparent">
+      <ListBox.ItemTemplate><DataTemplate><DockPanel><TextBlock Text="{Binding Count}" DockPanel.Dock="Right" Foreground="#7A8794" FontSize="11"/><TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="0,0,5,0"/></DockPanel></DataTemplate></ListBox.ItemTemplate>
+     </ListBox>
+    </DockPanel>
+   </Border>
+   <Grid Grid.Column="1" Margin="20,18,16,12">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <Border Background="White" CornerRadius="8" BorderBrush="#D4DFE8" BorderThickness="1" Padding="12,3">
+     <DockPanel><TextBlock Text="⌕" FontSize="25" Foreground="#167D8D" Margin="0,0,8,0" VerticalAlignment="Center"/>
+      <TextBlock DockPanel.Dock="Right" Text="Ctrl+F" Foreground="#9DA8B5" VerticalAlignment="Center" Margin="8,0"/>
+      <Grid><TextBlock Text="Pesquisar famílias, materiais, etiquetas…" Foreground="#8A99A8" Margin="10,9" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock><TextBox x:Name="SearchBox" TextChanged="SearchChanged" BorderThickness="0" FontSize="15" Background="Transparent" ToolTip="Pesquise por nome, palavra-chave ou etiqueta"/></Grid>
+     </DockPanel>
+    </Border>
+    <WrapPanel Grid.Row="1" Margin="0,12,0,8">
+     <Button Content="Todas" Tag="Todas" Click="ModeClick" x:Name="AllButton" Style="{StaticResource Primary}"/>
+     <Button Content="☆ Favoritas" Tag="Favoritas" Click="ModeClick"/>
+     <Button Content="◷ Recentes" Tag="Recentes" Click="ModeClick"/>
+     <Button Content="≡ Duplicadas" Tag="Duplicadas" Click="ModeClick"/>
+     <Button Content="△ A revisar" Tag="A revisar" Click="ModeClick"/>
+    </WrapPanel>
+    <WrapPanel Grid.Row="2" Margin="0,0,0,10">
+     <ComboBox x:Name="CompactCategory" Visibility="Collapsed" SelectionChanged="CompactCategoryChanged" DisplayMemberPath="Name" ToolTip="Categoria" MaxWidth="210"/>
+     <ComboBox x:Name="Subcategories" SelectionChanged="FilterChanged" ToolTip="Subcategoria" MaxWidth="220"/>
+     <ComboBox x:Name="Versions" SelectionChanged="FilterChanged" ToolTip="Versão verificada no Revit"/>
+     <ComboBox x:Name="Sort" SelectionChanged="FilterChanged" ToolTip="Ordenação"/>
+     <Button Content="Limpar" Click="ClearClick" Padding="10,6"/>
+    </WrapPanel>
+    <DockPanel Grid.Row="3" Margin="0,0,0,12">
+     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="▦" Click="GridClick" ToolTip="Exibir cartões" Padding="9,3"/><Button Content="☰" Click="ListClick" ToolTip="Exibir lista" Padding="9,3"/></StackPanel>
+     <TextBlock x:Name="ResultsLabel" Foreground="#657489" VerticalAlignment="Center"/>
+    </DockPanel>
+    <Grid Grid.Row="4">
+     <ScrollViewer x:Name="CardScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><ItemsControl x:Name="Cards">
+      <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate><DataTemplate>
+       <Border Width="210" Margin="0,0,12,14" Background="White" BorderBrush="#DBE3EA" BorderThickness="1" CornerRadius="9" PreviewMouseLeftButtonDown="CardMouseDown" MouseLeftButtonUp="CardClicked" Cursor="Hand" ToolTip="Clique uma vez para ver detalhes; clique duas vezes para carregar no Revit">
+        <StackPanel>
+         <Grid Height="145">
+          <Border Background="#EAF0F3" CornerRadius="9,9,0,0"/>
+          <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding Placeholder}">
+           <TextBlock Text="◇" FontSize="44" Foreground="#A3B6C0" HorizontalAlignment="Center"/>
+           <TextBlock Text="Prévia indisponível" FontSize="11" Foreground="#6D8292"/>
+          </StackPanel>
+          <Image Source="{Binding Preview}" Margin="13,10" Stretch="Uniform"/>
+          <CheckBox IsChecked="{Binding Selected, Mode=TwoWay}" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Selecionar para carregar ou excluir do HD" Click="SelectionClick"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,7,7,0">
+           <Button Content="{Binding Pin}" Click="PinClick" Padding="6,1" FontSize="16" Margin="0,0,3,0" ToolTip="Fixar ou desafixar no topo"/>
+           <Button Content="{Binding Star}" Click="FavoriteClick" Padding="7,1" FontSize="19" Margin="0" ToolTip="Adicionar ou remover dos favoritos"/>
+          </StackPanel>
+         </Grid>
+         <StackPanel Margin="12,10,12,10">
+          <TextBlock Text="{Binding Entry.Name}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" ToolTip="{Binding Entry.Name}"/>
+          <TextBlock Text="{Binding Entry.Subcategory}" TextTrimming="CharacterEllipsis" Foreground="#798697" FontSize="11" Margin="0,4,0,10"/>
+          <DockPanel><TextBlock Text="{Binding Entry.Size}" DockPanel.Dock="Right" Foreground="#798697" FontSize="11"/><TextBlock Text="{Binding VersionLabel}" Foreground="#167D8D" FontSize="11"/></DockPanel>
+          <Border Background="#EDF7F7" CornerRadius="4" Padding="8,5" Margin="0,10,0,0"><TextBlock Text="Ver detalhes  →" Foreground="#167D8D" FontSize="12"/></Border>
+         </StackPanel>
+        </StackPanel>
+       </Border>
+      </DataTemplate></ItemsControl.ItemTemplate>
+     </ItemsControl></ScrollViewer>
+     <ListView x:Name="Rows" Visibility="Collapsed" SelectionChanged="RowSelected" BorderThickness="0">
+      <ListView.View><GridView>
+       <GridViewColumn Header="Família" Width="310" DisplayMemberBinding="{Binding Entry.Name}"/>
+       <GridViewColumn Header="Categoria" Width="150" DisplayMemberBinding="{Binding Entry.Category}"/>
+       <GridViewColumn Header="Tamanho" Width="85" DisplayMemberBinding="{Binding Entry.Size}"/>
+       <GridViewColumn Header="Versão" Width="120" DisplayMemberBinding="{Binding VersionLabel}"/>
+      </GridView></ListView.View>
+     </ListView>
+     <StackPanel x:Name="EmptyState" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="340" Visibility="Collapsed">
+      <TextBlock Text="⌕" FontSize="56" Foreground="#AAC2CB" HorizontalAlignment="Center"/>
+      <TextBlock Text="Nenhuma família encontrada" FontSize="18" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+      <TextBlock x:Name="EmptyText" Text="Experimente outra palavra ou limpe os filtros." TextWrapping="Wrap" TextAlignment="Center" Foreground="#748294" Margin="0,12"/>
+     </StackPanel>
+    </Grid>
+    <DockPanel Grid.Row="5" Margin="0,6,0,0">
+     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="←" Click="PreviousClick" x:Name="Previous"/><TextBlock x:Name="PageLabel" VerticalAlignment="Center" Margin="6,0,14,0"/><Button Content="→" Click="NextClick" x:Name="Next"/></StackPanel>
+     <Button Content="Selecionar página" Click="SelectPageClick" HorizontalAlignment="Left" Padding="10,5"/>
+    </DockPanel>
+   </Grid>
+   <Border Grid.Column="2" x:Name="Inspector" Background="White" Padding="18" BorderBrush="#E0E6ED" BorderThickness="1,0,0,0">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel x:Name="Details">
+     <TextBlock Text="EM FOCO" Style="{StaticResource Label}" Margin="0,0,0,15"/>
+     <Border Background="#EDF2F5" CornerRadius="10" Height="180"><Image x:Name="DetailImage" Margin="10" Stretch="Uniform"/></Border>
+     <TextBlock x:Name="DetailName" Text="Selecione uma família" FontSize="19" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,18,0,5"/>
+     <TextBlock x:Name="DetailCategory" Foreground="#738396" TextWrapping="Wrap"/>
+     <TextBlock x:Name="DetailMeta" TextWrapping="Wrap" Margin="0,15" Foreground="#506477"/>
+     <Button x:Name="DetailLoad" Content="Carregar no projeto" Style="{StaticResource Primary}" Click="LoadOneClick" Margin="0,0,0,8" IsEnabled="False"/>
+     <Button x:Name="DetailRename" Content="Renomear arquivo" Click="RenameActiveClick" Margin="0,0,0,8" IsEnabled="False"/>
+     <Button x:Name="DetailPin" Content="⚐ Fixar no topo" Click="PinActiveClick" Margin="0,0,0,8" IsEnabled="False"/>
+     <Button Content="Ampliar prévia e detalhes" Click="PreviewClick" Margin="0,0,0,8"/>
+     <Button Content="Abrir pasta" Click="FolderClick" Margin="0,0,0,8"/>
+     <TextBlock Text="ETIQUETAS PESSOAIS" Style="{StaticResource Label}"/>
+     <TextBox x:Name="TagsBox" ToolTip="Ex.: residencial, madeira, aprovado" TextWrapping="Wrap"/>
+     <Button Content="Salvar etiquetas" Click="SaveTagsClick" Margin="0,8,0,0"/>
+     <TextBlock Text="ARQUIVO DE ORIGEM" Style="{StaticResource Label}"/>
+     <TextBlock x:Name="DetailPath" Foreground="#7C8796" FontSize="11" TextWrapping="Wrap"/>
+     <Button Content="Copiar caminho" Click="CopyClick" Margin="0,8,0,0" Padding="8,5"/>
+    </StackPanel></ScrollViewer>
+   </Border>
+  </Grid>
+  <Border Grid.Row="2" Background="White" BorderBrush="#DFE6EC" BorderThickness="0,1,0,0" Padding="16,10">
+   <DockPanel>
+    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+     <Button x:Name="CancelButton" Content="Cancelar" Click="CancelClick" Visibility="Collapsed"/>
+     <Button Content="Limpar seleção" Click="ClearSelectionClick" Padding="9,7"/>
+     <Button x:Name="LoadSelected" Content="Carregar seleção (0)" Click="LoadSelectedClick" Style="{StaticResource Primary}" IsEnabled="False"/>
+     <Button x:Name="RenameSelected" Content="Renomear (0)" Click="RenameSelectedClick" IsEnabled="False" ToolTip="Renomeia uma única família selecionada"/>
+     <Button x:Name="DeleteSelected" Content="Excluir do HD (0)" Click="DeleteSelectedClick" Foreground="#A33A3A" IsEnabled="False" ToolTip="Envia os arquivos selecionados para a Lixeira do Windows"/>
+    </StackPanel>
+    <StackPanel VerticalAlignment="Center"><TextBlock x:Name="Status" Text="Preparando biblioteca…" FontSize="12" TextWrapping="Wrap"/><ProgressBar x:Name="UpdateProgressBar" Width="240" Height="7" Minimum="0" Maximum="100" Visibility="Collapsed" Margin="0,5,0,0"/><ProgressBar x:Name="LibraryDownloadProgressBar" Width="300" Height="8" Minimum="0" Maximum="100" Visibility="Collapsed" Margin="0,5,0,0"/><TextBlock x:Name="LibraryDownloadDetails" Foreground="#5D7183" FontSize="10" TextWrapping="Wrap" Margin="0,3,0,0"/><TextBlock x:Name="HostLabel" Text="Catálogo local" Foreground="#8593A1" FontSize="10" Margin="0,3,0,0"/></StackPanel>
+   </DockPanel>
+  </Border>
+ </Grid>
+</UserControl>

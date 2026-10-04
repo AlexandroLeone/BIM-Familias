@@ -1,0 +1,29 @@
+# Verificação — 30/09/2026
+
+- Complemento compilado contra RevitAPI/RevitAPIUI do Revit 2027: sem erros. O SDK emitiu dois avisos de resolução de dependências transitivas da instalação Autodesk; a execução dentro do Revit ainda precisa ser concluída.
+- Interface WPF e catálogo avulso: compilados sem erros ou avisos.
+- 19 testes automatizados aprovados: exclusão de RVT; categorias e subcategorias; acentos; sinônimos; termos combinados; favoritos; isolamento de categoria; versões verificadas/desconhecidas; persistência; reindexação; SHA-256; filtro de duplicatas; invalidação de hash; prévia ausente; cancelamento; disco indisponível; raízes repetidas; limites de caminhos.
+- Indexação real: 31.874 arquivos RFA; nenhum erro de leitura; aproximadamente 16 segundos nesta máquina.
+- Busca real por “sofa”: 881 resultados. Categoria Sala: 761 famílias.
+- Amostra de prévias: 17 imagens PNG incorporadas extraídas de 20 famílias de sala.
+- Teste interno WPF: busca sem resultados, pesquisa real, categoria Sala, layout compacto e renderização aprovados. A imagem entregue foi renderizada pelo próprio aplicativo com dados reais; não é um desenho gerado por IA.
+- Manifesto e DLLs instalados em `%APPDATA%\Autodesk\Revit\Addins\2027\BimFamilias` e `BimFamilias.addin`. O BIM Copiloto existente foi preservado. A aba foi renomeada de `ChatGPT` para `Familia`.
+- Fluxo de carregamento atualizado: o complemento obtém um `FamilySymbol` válido, ativa o tipo em transação e chama `PromptForFamilyInstancePlacement`; em seleção múltipla, a inserção começa pela primeira família carregada com sucesso.
+- Proteção contra arquivo incompleto: antes do carregamento, cada `.rfa` precisa existir, poder ser aberto e permanecer com tamanho/data estáveis por uma janela de segurança; o teste automatizado também adiciona e detecta uma família nova após a atualização.
+- Teste real no Revit 2027: `Aquário 01.rfa` foi carregada e teve o tipo ativado dentro de um projeto temporário; a carga ocorreu dentro da transação, foi confirmada e o projeto original foi reativado sem alterações. A etapa de posicionamento continua sendo iniciada pelo botão **Inserir Componente** para o usuário escolher o ponto.
+- Atualização automática de `.rfa` implementada: inicia sem confirmação, processa uma família por vez pelo evento de ociosidade do Revit, substitui no mesmo caminho apenas arquivos antigos compatíveis e continua quando uma família falha. O painel informa percentual, atualizados, ignorados, erros e arquivo atual em tempo real; cada resultado é gravado em relatório JSONL.
+- Correção dos erros de versão: quando `BasicFileInfo` não consegue ler a estrutura de um `.rfa`, o complemento tenta a abertura direta pelo Revit; se o formato for rejeitado, registra como ignorado e continua. Opção de exclusão de duplicatas exatas adicionada, desmarcada por padrão, limitada à pasta selecionada e validada com teste que mantém uma cópia.
+- Funções de uso implementadas: opção **Ocultar após inserir** habilitada por padrão, botão `—` para ocultar o painel e fixação persistente no topo por família. Smoke test WPF aprovado com busca, categorias, layout compacto, bandeira de fixação e renderização.
+- Interação rápida adicionada: duplo clique em um cartão inicia diretamente o carregamento da família no Revit e o modo **Inserir Componente**; clique simples continua abrindo os detalhes.
+- Renomeio adicionado: permite alterar o nome de uma única família pelo rodapé ou pelos detalhes, preservando a extensão `.rfa`, recusando nomes inválidos/existentes e sincronizando o catálogo.
+- Exclusão de seleção adicionada: o botão **Excluir do HD** aceita uma ou várias famílias, mostra a lista antes de confirmar, envia os arquivos para a Lixeira do Windows e atualiza o índice; arquivos indisponíveis ou bloqueados são preservados.
+- Ativação adicionada: o primeiro uso após uma instalação exige `880-HH-DDMM`, salva a ativação vinculada ao `InstallationId` gerado pelo instalador e inclui o gerador administrativo em `dist\ativador`. Testes confirmaram `880-20-0210` para 02/10 às 20:15 e mudança por hora.
+- Mensagem de código inválido atualizada para informar que cada código de ativação é válido somente por 1 hora.
+- Botão **Ativador** adicionado à aba `Familia`: mostra sistema ativado/não ativado, dias e horas restantes do teste e oferece **Ativar agora**. O teste automatizado de tempo restante também foi aprovado.
+- Tela de ativação ajustada conforme a apresentação: textos explicativos removidos, botão **Solicitar ativação** abre o WhatsApp informado e **Teste por 7 dias** inicia uma avaliação única; testes confirmaram que o período não pode ser reiniciado no mesmo identificador.
+- Instalador por versão adicionado: detecta instalações do Revit, procura builds `dist\revit-AAAA` e registra somente a versão que possui DLL compilada; versões sem build são informadas sem receber DLL incompatível. A entrega validada contém Revit 2027.
+- Instalador EXE adicionado em `dist\instalador-exe\BimFamilias.Instalador.exe`: janela gráfica, detecção das versões instaladas, seleção por versão e instalação somente com build correspondente. O EXE deve permanecer junto dos arquivos de suporte gerados na mesma pasta.
+- Instalador autoextraível de arquivo único gerado em `dist\BimFamilias-Instalador-Unico.exe`, contendo o instalador e a build do plugin dentro do próprio EXE. A pasta com arquivos separados permanece como alternativa.
+- Ativação nesta sessão: solicitada via Revit API. O registro do Revit confirmou o diálogo `TaskDialog_Security_Unsigned_File_Loading`, aguardando a decisão do usuário.
+- **Pendente:** confirmar o carregamento do complemento e testar a carga de uma família em um projeto temporário. Não declarar validada a integração operacional antes desse teste.
+- Nenhum arquivo da biblioteca foi movido ou editado nesta implementação; nenhuma família foi carregada no Projeto1 durante os testes.

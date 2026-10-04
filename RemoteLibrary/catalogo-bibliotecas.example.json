@@ -1,0 +1,14 @@
+{
+  "name": "Biblioteca de Famílias BIM",
+  "version": "2026.10.03",
+  "packages": [
+    {
+      "id": "01-cozinha-parte-01",
+      "name": "Cozinha · parte 01",
+      "category": "Cozinha",
+      "url": "https://github.com/USUARIO/REPOSITORIO/releases/latest/download/01-cozinha-parte-01.zip",
+      "sha256": "PREENCHER_COM_SHA256",
+      "bytes": 0
+    }
+  ]
+}
